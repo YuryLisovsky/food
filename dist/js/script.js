@@ -89,5 +89,126 @@ window.addEventListener('DOMContentLoaded', () => {
 
   setClock('.timer', deadline);
 
+  // modal
+
+  const modalTrigger = document.querySelectorAll('[data-modal]'),
+    modal = document.querySelector('.modal'),
+    modalCloseBtn = document.querySelector('[data-close]');
+
+  function openModal() {
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+    clearInterval(modalTimerId);
+  }
+
+  modalTrigger.forEach(btn => {
+    btn.addEventListener('click', openModal);
+  });
+
+  function closeModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  };
+
+  modalCloseBtn.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    };
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && modal.classList.contains('show')) {
+      closeModal();
+    }
+  });
+
+  // const modalTimerId = setTimeout(openModal, 5000);
+
+  function showModalByScroll() {
+    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
+      openModal();
+      window.removeEventListener('scroll', showModalByScroll);
+    }
+  }
+
+  window.addEventListener('scroll', showModalByScroll);
+
+  // use class
+
+  class MenuCard {
+    constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+      this.src = src;
+      this.alt = alt;
+      this.title = title;
+      this.descr = descr;
+      this.prise = price;
+      this.classes = classes;
+      this.parent = document.querySelector(parentSelector);
+      this.transfer = 36;
+      this.changeToUAH();
+    }
+
+    changeToUAH() {
+      this.prise = this.prise * this.transfer;
+    }
+
+    render() {
+      const element = document.createElement('div');
+      if (this.classes.length === 0) {
+        this.element = 'menu__item';
+        element.classList.add(this.element);
+      } else {
+        this.classes.forEach(className => element.classList.add(className));
+      }
+
+      element.innerHTML = `        
+        <img src = ${this.src} alt = ${this.alt}>
+        <h3 class = "menu__item-subtitle">${this.title}</h3>
+        <div class = "menu__item-descr">
+        ${this.descr}
+        </div>
+        <div class = "menu__item-divider"></div>
+        <div class = "menu__item-price">
+          <div class = "menu__item-cost">Ціна:</div>
+          <div class = "menu__item-total"><span>${this.prise}</span> грн/день</div>
+        </div>        
+      `;
+      this.parent.append(element);
+    }
+  }
+
+  new MenuCard(
+    "img/tabs/vegy.jpg",
+    "vegy",
+    'Меню "Фітнес"',
+    'Меню "Фітнес" - це новий підхід до приготування страв: більше свіжих овочів та фруктів. Продукт активних та здорових людей. Це абсолютно новий продукт з оптимальною ціною та високою якістю!',
+    10,
+    '.menu .container',
+    'menu__item'
+  ).render();
+
+  new MenuCard(
+    "img/tabs/elite.jpg",
+    "elite",
+    'Меню “Преміум”',
+    'В меню "Преміум" ми використовуємо не тільки гарний дизайн упаковки, а й якісне виконання страв. Червона риба, морепродукти, фрукти – ресторанне меню без походу в ресторан!',
+    12,
+    '.menu .container',
+    'menu__item'
+  ).render();
+
+  new MenuCard(
+    "img/tabs/post.jpg",
+    "post",
+    'Меню "Пісне"',
+    'Меню "Пісне" - це ретельний підбір інгредієнтів: повне відсутність продуктів тваринного походження. Молоко з мигдалю, вівса, кокоса або гречки. Правильна кількість білків за рахунок тофу та імпортних вегетаріанських стейків.',
+    9,
+    '.menu .container',
+    'menu__item'
+  ).render();
 
 });
